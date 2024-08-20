@@ -96,6 +96,7 @@ namespace x360ce.Engine.Data
 				nameof(ForceType),
 				nameof(ForceSwapMotor),
 				nameof(ForceOverall),
+				nameof(ForceInvertMotor),
 				nameof(LeftMotorPeriod),
 				nameof(LeftMotorDirection),
 				nameof(LeftMotorStrength),
@@ -211,7 +212,8 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.ForceEnable);
 			AddValue(ref list, x => x.ForceType);
 			AddValue(ref list, x => x.ForceSwapMotor);
-			AddValue(ref list, x => x.ForceOverall, "100");
+            AddValue(ref list, x => x.ForceInvertMotor);
+            AddValue(ref list, x => x.ForceOverall, "100");
 			AddValue(ref list, x => x.LeftMotorPeriod);
 			AddValue(ref list, x => x.LeftMotorDirection);
 			AddValue(ref list, x => x.LeftMotorStrength, "100");
@@ -368,7 +370,9 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeForceEnable() { return !isDefault(ForceEnable); }
 		public bool ShouldSerializeForceOverall() { return !isDefault(ForceOverall, "100"); }
 		public bool ShouldSerializeForceSwapMotor() { return !isDefault(ForceSwapMotor); }
-		public bool ShouldSerializeForceType() { return !isDefault(ForceType); }
+
+        public bool ShouldSerializeForceInvertMotor() { return !isDefault(ForceInvertMotor); }
+        public bool ShouldSerializeForceType() { return !isDefault(ForceType); }
 		public bool ShouldSerializeGamePadType() { return !isDefault(GamePadType); }
 		public bool ShouldSerializeLeftMotorPeriod() { return !isDefault(LeftMotorPeriod); }
 		public bool ShouldSerializeLeftShoulder() { return !isDefault(LeftShoulder); }

@@ -305,7 +305,8 @@ namespace x360ce.App.Controls
 			//		ForceTypeComboBox,
 			//		ForceOverallTrackBar,
 			//		ForceSwapMotorCheckBox,
-			//		LeftMotorDirectionComboBox,
+			//		LeftMotor
+			//		,
 			//		LeftMotorPeriodTrackBar,
 			//		LeftMotorStrengthTrackBar,
 			//		RightMotorDirectionComboBox,

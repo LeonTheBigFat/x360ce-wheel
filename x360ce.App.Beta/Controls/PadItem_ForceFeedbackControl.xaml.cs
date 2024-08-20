@@ -70,8 +70,10 @@ namespace x360ce.App.Controls
 			// Set binding.
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceEnable), ForceEnabledCheckBox, null, boolConverter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceSwapMotor), SwapMotorsCheckBox, null, boolConverter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceType), ForceTypeComboBox, null, enumConverter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceInvertMotor), InvertMotorDirection, null, boolConverter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceType), ForceTypeComboBox, null, enumConverter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceOverall), StrengthUpDown, null, intConverter);
+
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 			LeftForceFeedbackMotorPanel.TestUpDown.ValueChanged += TestUpDown_ValueChanged;
 			RightForceFeedbackMotorPanel.TestUpDown.ValueChanged += TestUpDown_ValueChanged;
@@ -171,5 +173,9 @@ namespace x360ce.App.Controls
 			SetBinding(_MappedTo, null);
 		}
 
-	}
+        private void RightForceFeedbackMotorPanel_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+    }
 }

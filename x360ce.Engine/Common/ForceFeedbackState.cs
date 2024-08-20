@@ -1,6 +1,7 @@
 ﻿using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using x360ce.Engine.Data;
 
@@ -57,6 +58,7 @@ namespace x360ce.Engine
         // Force type changed by settings.
         string old_ForceType = "-1";
 		string old_ForceSwapMotor = "-1";
+        string old_ForceInvertMotor = "-1";
         // Force parameters changed by settings.
         string old_LeftPeriod;
         string old_RightPeriod;
@@ -156,7 +158,9 @@ namespace x360ce.Engine
 			// Effect type changed.
 			bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
 
-			ForceEffectType forceType = 0;
+            bool invertChanged = Changed(ref old_ForceInvertMotor, ps.ForceInvertMotor);
+
+            ForceEffectType forceType = 0;
 			if (motorsChanged || forceChanged)
             {
                 // Update values.
@@ -225,6 +229,7 @@ namespace x360ce.Engine
                 else if (actuatorL != null)
                 {
                     paramsL = GetParameters();
+                    paramsR = GetParameters();
                     paramsL.Axes = new int[1] { actuatorL.ObjectId };
                 }
             }
@@ -327,7 +332,26 @@ namespace x360ce.Engine
                 {
                     // Forces must be combined.
                     var combinedMagnitudeAdjusted = Math.Max(leftMagnitudeAdjusted, rightMagnitudeAdjusted);
+                    bool invertMotor = false;
+                    invertMotor = TryParse(ps.ForceInvertMotor) == 1;
                     var combinedPeriod = 0;
+                    if (invertMotor && rightMagnitudeAdjusted > leftMagnitudeAdjusted)
+                    {
+                        var directionR = TryParse(old_RightDirection);
+                        var dirR = new int[paramsL.Axes.Length];
+                        dirR[0] = directionR;
+                        paramsL.Directions = dirR;
+                        flagsL |= EffectParameterFlags.Direction;
+                    }
+                    else
+                    {
+                        var directionL = TryParse(old_LeftDirection);
+                        var dirL = new int[paramsL.Axes.Length];
+                        dirL[0] = directionL;
+                        paramsL.Directions = dirL;
+                        flagsL |= EffectParameterFlags.Direction;
+                    }
+
                     // If at least one speed is specified then...
                     if (leftMagnitudeAdjusted > 0 || rightMagnitudeAdjusted > 0)
                     {
@@ -350,6 +374,8 @@ namespace x360ce.Engine
                     PeriodicForceL.Magnitude = leftMagnitudeAdjusted;
                     PeriodicForceL.Period = leftPeriod;
                 }
+
+
                 // Update flags to indicate that specific force parameters changed.
                 flagsL |= EffectParameterFlags.TypeSpecificParameters;
             }
@@ -373,9 +399,12 @@ namespace x360ce.Engine
             {
                 SetParamaters(effectL, paramsL, flagsL);
             }
+
+
             if (flagsR != EffectParameterFlags.None)
                 SetParamaters(effectR, paramsR, flagsR);
             return true;
+            
         }
 
         void SetParamaters(Effect effect, EffectParameters parameters, EffectParameterFlags flags)
@@ -426,6 +455,7 @@ namespace x360ce.Engine
             old_RightStrength != ps.RightMotorStrength ||
             old_LeftDirection != ps.LeftMotorDirection ||
            old_RightDirection != ps.RightMotorDirection ||
+           old_ForceInvertMotor != ps.ForceInvertMotor ||
            old_OveralStrength != ps.ForceOverall;
         }
 
